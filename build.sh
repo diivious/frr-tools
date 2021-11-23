@@ -23,7 +23,7 @@ if [ "x$1" = "x-config" ]; then
        --with-pkg-git-version \
        --with-pkg-extra-version=
 
-elif
+else
     make -j 8
 fi
 
