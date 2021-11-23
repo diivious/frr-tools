@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 #
-# Donnie. V. Savage
+# Donnie V. Savage
 # 10 Nov, 2021
 #
 

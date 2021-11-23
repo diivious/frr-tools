@@ -1,6 +1,6 @@
 #
-# Donnie. V. Savage
-# 16 December, 2004
+# Donnie V. Savage
+# 10 Nov, 2021
 #
 
 if [[ "$EUID" = 0 ]]; then
@@ -17,13 +17,13 @@ sudo apt-get install git autoconf automake libtool make \
 echo Install LIBYANG2
 cd ~/Downloads
 
-wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANGV2/shared/build-5/Debian-10-x86_64-Packages/libyang-tools_2.0.7-1%7Edeb10u1_all.deb'
-wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANGV2/shared/build-5/Debian-10-x86_64-Packages/libyang2-dev_2.0.7-1%7Edeb10u1_amd64.deb'
-wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANGV2/shared/build-5/Debian-10-x86_64-Packages/libyang2_2.0.7-1%7Edeb10u1_amd64.deb'
+wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-150/Debian-10-x86_64-Packages/libyang-dev_2.0.0-0_amd64.deb'
+wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-150/Debian-10-x86_64-Packages/libyang-tools_2.0.0-0_amd64.deb'
+wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-150/Debian-10-x86_64-Packages/libyang2_2.0.0-0_amd64.deb'
 
-sudo apt install ./libyang2-dev_2.0.7-1~deb10u1_amd64.deb
-sudo apt install ./libyang-tools_2.0.7-1~deb10u1_all.deb 
-sudo apt install ./libyang2_2.0.7-1~deb10u1_amd64.deb
+sudo apt install ./libyang2_2.0.0-0_amd64.deb
+sudo apt install ./libyang-tools_2.0.0-0_amd64.deb
+sudo apt install ./libyang-dev_2.0.0-0_amd64.deb
 
 echo Install GROUPS
 sudo addgroup --system --gid 92 frr
