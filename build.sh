@@ -6,6 +6,8 @@
 
 cd ~/devel/frr
 
+# If ever this grows, then do better commandline arg processing
+
 if [ "x$1" = "x-config" ]; then
     shift
    ./bootstrap.sh

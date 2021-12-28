@@ -4,6 +4,14 @@
 # 10 Nov, 2021
 #
 
+if [ -d "$1" ]; then
+    target=$1
+    shift;
+else
+    target="eigrpd"
+fi
+
+# If ever this grows, then do better commandline arg processing
 if [ "x$1" = "x-all" ]; then
     echo Updating FRR-ORIG
     cd ~/devel/frr-orig
@@ -11,19 +19,19 @@ if [ "x$1" = "x-all" ]; then
     git pull
 fi
 
-echo Updating EIGRPD
-cd ~/devel/eigrpd
+echo Updating $TARGET
+cd ~/devel/$target
     git fetch
     git pull
 
 echo Updating FRR
 cd ~/devel/frr
-    rm -rf eigrpd
+    rm -rf $target
     git fetch
     git pull
 
-echo Copying EIGRPD
+echo Copying $TARGET
 cd ~/devel/frr
-    rm -rf eigrpd
-    cp -r ../eigrpd .
+    rm -rf $target
+    ln -s ../$target .
 
