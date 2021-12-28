@@ -26,12 +26,12 @@ cd ~/devel/$target
 
 echo Updating FRR
 cd ~/devel/frr
-    rm -rf $target
+    rm -rf eigrpd
     git fetch
     git pull
 
 echo Copying $TARGET
 cd ~/devel/frr
-    rm -rf $target
-    ln -s ../$target .
+    rm -rf eigrpd
+    ln -s ../$target eigrpd
 
