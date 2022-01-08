@@ -19,7 +19,7 @@ if [ "x$1" = "x-all" ]; then
     git pull
 fi
 
-echo Updating $TARGET
+echo Updating $target
 cd ~/devel/$target
     git fetch
     git pull
@@ -30,7 +30,7 @@ cd ~/devel/frr
     git fetch
     git pull
 
-echo Copying $TARGET
+echo Copying $target
 cd ~/devel/frr
     rm -rf eigrpd
     ln -s ../$target eigrpd
