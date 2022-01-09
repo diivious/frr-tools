@@ -8,6 +8,10 @@ if [[ "$EUID" = 0 ]]; then
     exit
 fi
 
+echo Fixing Shared library error
+echo include /usr/local/lib >> /etc/ld.so.conf
+ldconfig
+
 echo Install DEVTOOLS
 sudo apt-get install git autoconf automake libtool make \
   libreadline-dev texinfo libjson-c-dev pkg-config bison flex \
@@ -30,6 +34,11 @@ sudo addgroup --system --gid 92 frr
 sudo addgroup --system --gid 85 frrvty
 sudo adduser --system --ingroup frr --home /var/opt/frr/ --gecos "FRR suite" --shell /bin/false frr
 sudo usermod -a -G frrvty frr
+
+echo Add Me to FRR GROUPS
+sudo usermod -a -G frr $USER
+sudo usermod -a -G frrvty $USER
+
 
 echo Clone REPOS
 cd ~/devel
@@ -65,18 +74,24 @@ echo install FRR
 sudo make install
 
 echo Create CONFIGS
+sudo install -m 775 -o frr -g frrvty -d /etc/frr
+sudo install -m 640 -o frr -g frrvty /dev/null /etc/frr/vtysh.conf
+
 sudo install -m 755 -o frr -g frr -d /var/log/frr
 sudo install -m 755 -o frr -g frr -d /var/opt/frr
-sudo install -m 775 -o frr -g frrvty -d /etc/frr
-sudo install -m 640 -o frr -g frr /dev/null /etc/frr/zebra.conf
-sudo install -m 640 -o frr -g frr /dev/null /etc/frr/bgpd.conf
-sudo install -m 640 -o frr -g frr /dev/null /etc/frr/ospfd.conf
-sudo install -m 640 -o frr -g frr /dev/null /etc/frr/ospf6d.conf
-sudo install -m 640 -o frr -g frr /dev/null /etc/frr/isisd.conf
-sudo install -m 640 -o frr -g frr /dev/null /etc/frr/ripd.conf
-sudo install -m 640 -o frr -g frr /dev/null /etc/frr/ripngd.conf
-sudo install -m 640 -o frr -g frr /dev/null /etc/frr/pimd.conf
-sudo install -m 640 -o frr -g frr /dev/null /etc/frr/ldpd.conf
-sudo install -m 640 -o frr -g frr /dev/null /etc/frr/nhrpd.conf
-sudo install -m 640 -o frr -g frrvty /dev/null /etc/frr/vtysh.conf
-sudo install -m 640 -o frr -g frr /dev/null /etc/frr/eigrpd.conf
+
+echo Create EIGRPD CONFIG
+echo 'service integrated-vtysh-config' > /etc/frr/vtysh.conf
+sudo cp ~/devel/eigrpd-tools/etc.frr.frr.conf /etc/frr/frr.conf
+
+echo Cheching /etc/services
+if [ "`grep 2613 /etc/services`" = "" ]; then
+ echo You need to add content of etc.services to /etc/services
+fi
+
+echo Start FRR Service
+sudo cp ~/devel/eigrpd-tools/etc.frr.daemons /etc/frr/daemons
+sudo systemctl daemon-reload
+
+sudo cp ~/devel/frr/tools/frr.service /etc/systemd/system/frr.service
+sudo systemctl start frr
