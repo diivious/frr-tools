@@ -9,8 +9,10 @@ if [[ "$EUID" = 0 ]]; then
 fi
 
 echo Fixing Shared library error
-echo include /usr/local/lib >> /etc/ld.so.conf
-ldconfig
+if [ "`grep -c "/usr/local/lib" /etc/ld.so.conf`" = "0" ]; then
+    sudo echo include /usr/local/lib >> /etc/ld.so.conf
+    ldconfig
+fi
 
 echo Install DEVTOOLS
 sudo apt-get install git autoconf automake libtool make \
