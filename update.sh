@@ -4,6 +4,7 @@
 # 10 Nov, 2021
 #
 
+cd ~/devel
 if [ -d "$1" ]; then
     target=$1
     shift;
