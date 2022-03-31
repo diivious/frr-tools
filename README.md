@@ -16,6 +16,7 @@ Some handy vtysh cofic commands
      sudo gdb eigrpd/.libs/eigrpd 
 
      // Config for test topo
+     vtysh -c 'debug eigrp packets hello' -c 'debug eigrp packets update' -c 'deb eigrp transmit send' -c 'deb eigrp transmit recv'
      vtysh -c 'configure terminal' -c 'router eigrp 4453' -c 'network 10.0.0.0/8' -c 'network 122.16.0.0/24' -c 'network 192.168.1.0/24'
 
 
