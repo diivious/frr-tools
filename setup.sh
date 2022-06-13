@@ -95,5 +95,5 @@ echo Start FRR Service
 sudo cp ~/devel/eigrpd-tools/etc.frr.daemons /etc/frr/daemons
 sudo systemctl daemon-reload
 
-sudo cp ~/devel/frr/tools/frr.service /etc/systemd/system/frr.service
+sudo cp ~/devel/eigrpd-tools/frr.service /etc/systemd/system/frr.service
 sudo systemctl start frr
