@@ -8,39 +8,54 @@ if [[ "$EUID" = 0 ]]; then
     exit
 fi
 
-echo Fixing Shared library error
-if [ "`grep -c "/usr/local/lib" /etc/ld.so.conf`" = "0" ]; then
-    sudo echo include /usr/local/lib >> /etc/ld.so.conf
-    ldconfig
+LDFIX=`grep -c "/usr/local/lib" /etc/ld.so.conf`
+if [ $LDFIX = "0" ]; then
+    echo Fixing Shared library error
+    sudo echo "include /usr/local/lib" | sudo tee -a /etc/ld.so.conf
+    sudo ldconfig
 fi
 
 echo Install DEVTOOLS
-sudo apt-get install git autoconf automake libtool make \
+sudo apt-get install wget git autoconf automake libtool make \
   libreadline-dev texinfo libjson-c-dev pkg-config bison flex \
   libc-ares-dev python3-dev python3-pytest python3-sphinx build-essential \
   libsnmp-dev libcap-dev libelf-dev
 
-echo Install LIBYANG2
-cd ~/Downloads
+if [ "`apt list libyang-dev`" == "Listing..." ]; then
+    echo Install LIBYANG2
 
-wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-150/Debian-10-x86_64-Packages/libyang-dev_2.0.0-0_amd64.deb'
-wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-150/Debian-10-x86_64-Packages/libyang-tools_2.0.0-0_amd64.deb'
-wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-150/Debian-10-x86_64-Packages/libyang2_2.0.0-0_amd64.deb'
+    if [ `uname -m` == "aarch64" ]; then
+	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-150/Debian-9-arm8-Packages/libyang-dev_2.0.0-0_arm64.deb'
+	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-150/Debian-9-arm8-Packages/libyang-tools_2.0.0-0_arm64.deb'
+	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-150/Debian-9-arm8-Packages/libyang2_2.0.0-0_arm64.deb'
+	sudo apt install ./libyang-dev_2.0.0-0_arm64.deb
+	sudo apt install ./libyang-tools_2.0.0-0_arm64.deb
+	sudo apt install ./libyang-dev_2.0.0-0_arm64.deb
+	
+    else
+	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-150/Debian-10-x86_64-Packages/libyang-dev_2.0.0-0_amd64.deb'
+	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-150/Debian-10-x86_64-Packages/libyang-tools_2.0.0-0_amd64.deb'
+	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-150/Debian-10-x86_64-Packages/libyang2_2.0.0-0_amd64.deb'
+	sudo apt install ./libyang2_2.0.0-0_amd64.deb
+	sudo apt install ./libyang-tools_2.0.0-0_amd64.deb
+	sudo apt install ./libyang-dev_2.0.0-0_amd64.deb
+    fi
+fi
 
-sudo apt install ./libyang2_2.0.0-0_amd64.deb
-sudo apt install ./libyang-tools_2.0.0-0_amd64.deb
-sudo apt install ./libyang-dev_2.0.0-0_amd64.deb
+if [ "`/usr/bin/groups frr`" == "frr : frr frrvty" ] ; then
+   echo Already Installed GROUPS
 
-echo Install GROUPS
-sudo addgroup --system --gid 92 frr
-sudo addgroup --system --gid 85 frrvty
-sudo adduser --system --ingroup frr --home /var/opt/frr/ --gecos "FRR suite" --shell /bin/false frr
-sudo usermod -a -G frrvty frr
+else
+    echo Install GROUPS
+    sudo addgroup --system --gid 92 frr
+    sudo addgroup --system --gid 85 frrvty
+    sudo adduser --system --ingroup frr --home /var/opt/frr/ --gecos "FRR suite" --shell /bin/false frr
+    sudo usermod -a -G frrvty frr
 
-echo Add Me to FRR GROUPS
-sudo usermod -a -G frr $USER
-sudo usermod -a -G frrvty $USER
-
+    echo Add Me to FRR GROUPS
+    sudo usermod -a -G frr $USER
+    sudo usermod -a -G frrvty $USER
+fi
 
 echo Clone REPOS
 cd ~/devel
@@ -83,17 +98,17 @@ sudo install -m 755 -o frr -g frr -d /var/log/frr
 sudo install -m 755 -o frr -g frr -d /var/opt/frr
 
 echo Create EIGRPD CONFIG
-echo 'service integrated-vtysh-config' > /etc/frr/vtysh.conf
-sudo cp ~/devel/eigrpd-tools/etc.frr.frr.conf /etc/frr/frr.conf
+sudo echo 'service integrated-vtysh-config' > /etc/frr/vtysh.conf
+sudo cp ~/devel/eigrp-tools/etc.frr.frr.conf /etc/frr/frr.conf
 
 echo Cheching /etc/services
 if [ "`grep 2613 /etc/services`" = "" ]; then
- echo You need to add content of etc.services to /etc/services
+    echo You need to add content of etc.services to /etc/services
 fi
 
 echo Start FRR Service
-sudo cp ~/devel/eigrpd-tools/etc.frr.daemons /etc/frr/daemons
+sudo cp ~/devel/eigrp-tools/etc.frr.daemons /etc/frr/daemons
 sudo systemctl daemon-reload
 
-sudo cp ~/devel/eigrpd-tools/frr.service /etc/systemd/system/frr.service
+sudo cp ~/devel/frr/tools/frr.service /etc/systemd/system/frr.service
 sudo systemctl start frr
