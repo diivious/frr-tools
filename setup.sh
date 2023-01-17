@@ -21,7 +21,7 @@ sudo apt-get install wget git autoconf automake libtool make \
   libc-ares-dev python3-dev python3-pytest python3-sphinx build-essential \
   libsnmp-dev libcap-dev libelf-dev
 
-if [ "`apt list libyang-dev`" == "Listing..." ]; then
+if [ "`apt list libyang-dev | grep 2.0`" == "" ]; then
     echo Install LIBYANG2
 
     if [ `uname -m` == "aarch64" ]; then
@@ -92,23 +92,28 @@ sudo make install
 
 echo Create CONFIGS
 sudo install -m 775 -o frr -g frrvty -d /etc/frr
-sudo install -m 640 -o frr -g frrvty /dev/null /etc/frr/vtysh.conf
+sudo install -m 755 -o frr -g frrvty /dev/null /etc/frr/vtysh.conf
 
 sudo install -m 755 -o frr -g frr -d /var/log/frr
 sudo install -m 755 -o frr -g frr -d /var/opt/frr
 
 echo Create EIGRPD CONFIG
+sudo chmod 777 /etc/frr/vtysh.conf
 sudo echo 'service integrated-vtysh-config' > /etc/frr/vtysh.conf
 sudo cp ~/devel/eigrp-tools/etc.frr.frr.conf /etc/frr/frr.conf
+sudo chmod 640 /etc/frr/vtysh.conf
 
 echo Cheching /etc/services
 if [ "`grep 2613 /etc/services`" = "" ]; then
-    echo You need to add content of etc.services to /etc/services
+    echo Patching content of etc.services to /etc/services
+    sudo patch /etc/service ~/devel/eigrp-tools/etc.services
 fi
 
-echo Start FRR Service
+echo Config FRR Service
 sudo cp ~/devel/eigrp-tools/etc.frr.daemons /etc/frr/daemons
-sudo systemctl daemon-reload
-
 sudo cp ~/devel/frr/tools/frr.service /etc/systemd/system/frr.service
+
+echo daemon-reload
+sudo systemctl daemon-reload
+echo Start FRR Service
 sudo systemctl start frr
