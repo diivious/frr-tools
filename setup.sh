@@ -21,6 +21,9 @@ sudo apt-get install wget git autoconf automake libtool make \
   libc-ares-dev python3-dev python3-pytest python3-sphinx build-essential \
   libsnmp-dev libcap-dev libelf-dev
 
+sudo apt-get install libunwind-dev libprotobuf-c-dev protobuf-c-compiler
+
+
 if [ "`apt list libyang-dev | grep 2.0`" == "" ]; then
     echo Install LIBYANG2
 
