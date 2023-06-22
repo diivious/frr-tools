@@ -31,20 +31,19 @@ if [ "`apt list libyang-dev | grep 2.0`" == "" ]; then
     echo Install LIBYANG2
 
     if [ `uname -m` == "aarch64" ]; then
-	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-150/Debian-9-arm8-Packages/libyang-dev_2.0.0-0_arm64.deb'
-	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-150/Debian-9-arm8-Packages/libyang-tools_2.0.0-0_arm64.deb'
-	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-150/Debian-9-arm8-Packages/libyang2_2.0.0-0_arm64.deb'
-	sudo apt install ./libyang-dev_2.0.0-0_arm64.deb
-	sudo apt install ./libyang-tools_2.0.0-0_arm64.deb
-	sudo apt install ./libyang-dev_2.0.0-0_arm64.deb
-	
+	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-00181/Debian-12-arm8-Packages/libyang2_2.1.80-1~deb12_arm64.deb'
+	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-00181/Debian-12-arm8-Packages/libyang2-dev_2.1.80-1~deb12_arm64.deb'
+	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-00181/Debian-12-arm8-Packages/libyang2-tools_2.1.80-1~deb12_arm64.deb'
+	sudo apt install ./libyang2_2.1.80-1~deb12_arm64.deb
+	sudo apt install ./libyang2-dev_2.1.80-1~deb12_arm64.deb
+	sudo apt install ./libyang2-tools_2.1.80-1~deb12_arm64.deb
     else
-	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-150/Debian-10-x86_64-Packages/libyang-dev_2.0.0-0_amd64.deb'
-	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-150/Debian-10-x86_64-Packages/libyang-tools_2.0.0-0_amd64.deb'
-	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-150/Debian-10-x86_64-Packages/libyang2_2.0.0-0_amd64.deb'
-	sudo apt install ./libyang2_2.0.0-0_amd64.deb
-	sudo apt install ./libyang-tools_2.0.0-0_amd64.deb
-	sudo apt install ./libyang-dev_2.0.0-0_amd64.deb
+	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-00181/Debian-12-x86_64-Packages/libyang2_2.1.80-1~deb12_amd64.deb'
+	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-00181/Debian-12-x86_64-Packages/libyang2-dev_2.1.80-1~deb12_amd64.deb'
+	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-00181/Debian-12-x86_64-Packages/libyang2-tools_2.1.80-1~deb12_amd64.deb'
+	sudo apt install ./libyang2_2.1.80-1~deb12_amd64.deb
+	sudo apt install ./libyang2-dev_2.1.80-1~deb12_amd64.deb
+	sudo apt install ./libyang2-tools_2.1.80-1~deb12_amd64.deb
     fi
 fi
 
