@@ -8,6 +8,11 @@ if [[ "$EUID" = 0 ]]; then
     exit
 fi
 
+if [ ! -e etc.services ]; then
+    echo "Setup must be run from the tools director"
+    exit
+fi
+
 LDFIX=`grep -c "/usr/local/lib" /etc/ld.so.conf`
 if [ $LDFIX = "0" ]; then
     echo Fixing Shared library error
@@ -26,24 +31,23 @@ sudo apt-get install wget git autoconf automake libtool make \
 
 sudo apt-get install libunwind-dev libprotobuf-c-dev protobuf-c-compiler
 
-
-if [ "`apt list libyang-dev | grep 2.0`" == "" ]; then
+if [ "`apt list -a libyang2 | grep 2.1`" == "" ]; then
     echo Install LIBYANG2
 
     if [ `uname -m` == "aarch64" ]; then
-	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-00181/Debian-12-arm8-Packages/libyang2_2.1.80-1~deb12_arm64.deb'
-	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-00181/Debian-12-arm8-Packages/libyang2-dev_2.1.80-1~deb12_arm64.deb'
-	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-00181/Debian-12-arm8-Packages/libyang2-tools_2.1.80-1~deb12_arm64.deb'
-	sudo apt install ./libyang2_2.1.80-1~deb12_arm64.deb
-	sudo apt install ./libyang2-dev_2.1.80-1~deb12_arm64.deb
-	sudo apt install ./libyang2-tools_2.1.80-1~deb12_arm64.deb
+	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-00184/Debian-12-arm8-Packages/libyang2_2.1.128.83.gfc4dbd92-1~deb12_arm64.deb'
+	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-00184/Debian-12-arm8-Packages/libyang2-dev_2.1.128.83.gfc4dbd92-1~deb12_arm64.deb'
+	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-00184/Debian-12-arm8-Packages/libyang2-tools_2.1.128.83.gfc4dbd92-1~deb12_arm64.deb'
+	sudo apt install ./libyang2_2.1.128.83.gfc4dbd92-1~deb12_arm64.deb
+	sudo apt install ./libyang2-dev_2.1.128.83.gfc4dbd92-1~deb12_arm64.deb
+	sudo apt install ./libyang2-tools_2.1.128.83.gfc4dbd92-1~deb12_arm64.deb
     else
-	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-00181/Debian-12-x86_64-Packages/libyang2_2.1.80-1~deb12_amd64.deb'
-	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-00181/Debian-12-x86_64-Packages/libyang2-dev_2.1.80-1~deb12_amd64.deb'
-	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-00181/Debian-12-x86_64-Packages/libyang2-tools_2.1.80-1~deb12_amd64.deb'
-	sudo apt install ./libyang2_2.1.80-1~deb12_amd64.deb
-	sudo apt install ./libyang2-dev_2.1.80-1~deb12_amd64.deb
-	sudo apt install ./libyang2-tools_2.1.80-1~deb12_amd64.deb
+	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-00184/Debian-12-x86_64-Packages/libyang2_2.1.128.83.gfc4dbd92-1~deb12_amd64.deb'
+	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-00184/Debian-12-x86_64-Packages/libyang2-dev_2.1.128.83.gfc4dbd92-1~deb12_amd64.deb'
+	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-00184/Debian-12-x86_64-Packages/libyang2-tools_2.1.128.83.gfc4dbd92-1~deb12_amd64.deb'
+	sudo apt install ./libyang2_2.1.128.83.gfc4dbd92-1~deb12_amd64.deb
+	sudo apt install ./libyang2-dev_2.1.128.83.gfc4dbd92-1~deb12_amd64.deb
+	sudo apt install ./libyang2-tools_2.1.128.83.gfc4dbd92-1~deb12_amd64.deb
     fi
 fi
 
@@ -63,14 +67,14 @@ else
 fi
 
 echo Clone REPOS
-cd ~/devel
+pushd ~/devel
 
 git clone git@github.com:diivious/eigrpd.git
 git clone https://github.com/frrouting/frr.git frr
 git clone https://github.com/frrouting/frr.git frr-orig
 
 echo Config FRR
-cd ~/devel/frr
+cd frr
    ./bootstrap.sh
    ./configure \
        --localstatedir=/var/opt/frr \
@@ -96,6 +100,7 @@ echo install FRR
 sudo make install
 
 echo Create CONFIGS
+popd
 sudo install -m 775 -o frr -g frrvty -d /etc/frr
 sudo install -m 755 -o frr -g frrvty /dev/null /etc/frr/vtysh.conf
 
@@ -111,7 +116,7 @@ sudo chmod 640 /etc/frr/vtysh.conf
 echo Cheching /etc/services
 if [ "`grep 2613 /etc/services`" = "" ]; then
     echo Patching content of etc.services to /etc/services
-    sudo patch /etc/service ~/devel/frr-tools/etc.services
+    sudo patch /etc/services < ~/devel/frr-tools/etc.services
 fi
 
 echo Config FRR Service
