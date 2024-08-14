@@ -1,15 +1,23 @@
-#
+
 # Donnie V. Savage
 # 10 Nov, 2021
 #
 
 if [[ "$EUID" = 0 ]]; then
-    echo "Do not run as root"
+    echo "Script can not be run as root"
+    exit
+fi
+
+IS_SUDO=`groups | grep -c sudo`
+if [ $IS_SUDO = "0" ]; then
+    echo "Must be in SUDO group. As root, use command:"
+    echo "    usermod -aG sudo $USER"
+    echo "Then log out and back in for it to take effect"
     exit
 fi
 
 if [ ! -e etc.services ]; then
-    echo "Setup must be run from the tools director"
+    echo "Setup must be run from the tools directory"
     exit
 fi
 
