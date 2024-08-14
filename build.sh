@@ -12,9 +12,9 @@ if [ "x$1" = "x-config" ]; then
     shift
    ./bootstrap.sh
    ./configure \
-       --localstatedir=/var/opt/frr \
+       --sysconfdir=/etc \
+       --localstatedir=/var \
        --sbindir=/usr/lib/frr \
-       --sysconfdir=/etc/frr \
        --enable-multipath=64 \
        --enable-user=frr \
        --enable-group=frr \
@@ -24,8 +24,6 @@ if [ "x$1" = "x-config" ]; then
        --enable-fpm \
        --with-pkg-git-version \
        --with-pkg-extra-version=
-
 else
     make -j 8
 fi
-

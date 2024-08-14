@@ -11,10 +11,13 @@ fi
 IS_SUDO=`groups | grep -c sudo`
 if [ $IS_SUDO = "0" ]; then
     echo "Must be in SUDO group. As root, use command:"
-    echo "    usermod -aG sudo $USER"
+    echo "    /sbin/usermod -aG sudo $USER"
+    echo "    /sbin/usermod -aG adm $USER"
     echo "Then log out and back in for it to take effect"
     exit
 fi
+
+
 
 if [ ! -e etc.services ]; then
     echo "Setup must be run from the tools directory"
@@ -39,9 +42,8 @@ sudo apt-get install wget git autoconf automake libtool make \
 
 sudo apt-get install libunwind-dev libprotobuf-c-dev protobuf-c-compiler
 
-if [ "`apt list -a libyang2 | grep 2.1`" == "" ]; then
-    echo Install LIBYANG2
-
+echo Install LIBYANG
+if [ "`apt list -a libyang2 | grep 2.1.128`" == "" ]; then
     if [ `uname -m` == "aarch64" ]; then
 	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-00184/Debian-12-arm8-Packages/libyang2_2.1.128.83.gfc4dbd92-1~deb12_arm64.deb'
 	wget 'https://ci1.netdef.org/artifact/LIBYANG-LIBYANG2/shared/build-00184/Debian-12-arm8-Packages/libyang2-dev_2.1.128.83.gfc4dbd92-1~deb12_arm64.deb'
@@ -85,9 +87,9 @@ echo Config FRR
 cd frr
    ./bootstrap.sh
    ./configure \
-       --localstatedir=/var/opt/frr \
+       --sysconfdir=/etc \
+       --localstatedir=/var \
        --sbindir=/usr/lib/frr \
-       --sysconfdir=/etc/frr \
        --enable-multipath=64 \
        --enable-user=frr \
        --enable-group=frr \
